@@ -31,10 +31,11 @@ def get_data_dir():
     return os.path.join('/', "home", os.environ.get("SUDO_USER", os.environ["USER"]), ".local", "share", "waydroid", "data")
 
 # execute on host
-def run(args: list, env: Optional[str] = None, ignore: Optional[str] = None):
+def run(args: list, stdin: Optional[str] = None, env: Optional[str] = None, ignore: Optional[str] = None):
     result = subprocess.run(
         args=args, 
         env=env, 
+        stdin=stdin,
         stdout=subprocess.PIPE, 
         stderr=subprocess.PIPE
     )

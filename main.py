@@ -108,6 +108,8 @@ def install_app(args):
 
         mount("system", copy_dir)
         mount("vendor", copy_dir)
+    elif "libhoudini" in app and args.android_version == "13":
+        mount("system", "/tmp/waydroid")
 
     for item in install_list:
         item.install()
@@ -115,6 +117,8 @@ def install_app(args):
     if not container.use_overlayfs():
         umount("vendor", copy_dir)
         umount("system", copy_dir)
+    elif "libhoudini" in app and args.android_version == "13":
+        umount("system", "/tmp/waydroid")
 
     container.upgrade()
 
@@ -229,10 +233,10 @@ def interact():
     if not action:
         exit()
 
-    install_choices = ["gapps", "microg", "libndk", "magisk", "smartdock", "fdroidpriv",]
+    install_choices = ["gapps", "microg", "libndk", "magisk", "smartdock", "fdroidpriv", "libhoudini"]
     hack_choices = []
     if android_version=="11":
-        install_choices.extend(["libhoudini", "widevine"])
+        install_choices.extend(["widevine"])
         hack_choices.extend(["nodataperm", "hidestatusbar"])
 
     if action == "Install":
