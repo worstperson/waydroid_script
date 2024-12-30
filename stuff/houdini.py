@@ -55,6 +55,17 @@ on property:sys.boot_completed=1
         "lib64/arm64",
         "lib64/libhoudini.so"
     ]
+    build = """--- org/build.prop	2024-12-29 23:28:21.305124851 -0600
++++ patch/build.prop	2024-12-29 23:27:36.092053959 -0600
+@@ -130,7 +130,7 @@
+ dalvik.vm.dexopt.secondary=true
+ dalvik.vm.dexopt.thermal-cutoff=2
+ dalvik.vm.appimageformat=lz4
+-ro.dalvik.vm.native.bridge=0
++#ro.dalvik.vm.native.bridge=0
+ pm.dexopt.first-boot=verify
+ pm.dexopt.boot-after-ota=verify
+ pm.dexopt.post-boot=extract"""
     init = """--- org/init.rc	2024-12-28 00:40:55.154387888 -0600
 +++ patch/init.rc	2024-12-27 19:23:03.446742924 -0600
 @@ -977,6 +977,10 @@
@@ -251,6 +262,14 @@ on property:sys.boot_completed=1
         with open(init_path, "w") as initfile:
             initfile.write(self.init_rc_component)
         if self.android_version == "13":
+            build_patch = os.path.join(self.extract_to, "build.patch")
+            with open(build_patch, "w") as pfile:
+                pfile.write(self.build)
+            with open(build_patch, "r") as pfile:
+                buildproppath = os.path.join(self.copy_dir, self.partition, "build.prop")
+                if not os.path.isfile(buildproppath):
+                    os.makedirs(os.path.dirname(buildproppath), exist_ok=True)
+                run(["patch", os.path.join("/tmp/waydroid", self.partition, "build.prop"), "-o", buildproppath], stdin=pfile)
             init_patch = os.path.join(self.extract_to, "init.patch")
             with open(init_patch, "w") as pfile:
                 pfile.write(self.init)
